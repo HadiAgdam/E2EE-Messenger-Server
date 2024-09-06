@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from models import Message
-from data import new_message, get_messages_by_time_stamp
+from data import new_message, get_messages_by_id
 
 app = Flask(__name__)
 
@@ -38,7 +38,7 @@ def _get_updates():
 
     last_id = request.args.get("message_id", 0)
 
-    messages = get_messages_by_time_stamp(public_key, last_id)
+    messages = get_messages_by_id(public_key, last_id)
 
     return jsonify(messages), SUCCESS
 

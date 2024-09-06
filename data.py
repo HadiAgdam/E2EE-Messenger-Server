@@ -6,6 +6,6 @@ def new_message(message: Message):
     pass
 
 
-def get_messages_by_time_stamp(p_key: str, time_stamp: int) -> list:
+def get_messages_by_id(p_key: str, last_message_id: int) -> list:
     # TODO get messages from database where public key matches and time stamp of message is bigger than time_stamp
     pass
