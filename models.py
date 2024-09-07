@@ -1,4 +1,3 @@
-from time import time
 
 
 class Message:
@@ -7,12 +6,11 @@ class Message:
             receiver: str,
             key: str,
             message: str,
-            time_stamp: int = -1
+            message_id: int = -1,
+            time: int = -1
     ):
+        self.message_id = message_id
         self.receiver = receiver
         self.key = key
         self.message = message
-        if time_stamp == -1:
-            self.time_stamp = time()
-        else:
-            self.time_stamp = time_stamp
+        self.time = time
