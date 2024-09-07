@@ -18,4 +18,23 @@ def get_messages_by_id(p_key: str, last_message_id: int) -> list:
         "SELECT * FROM messages WHERE recipient_public_key = ? AND message_id > ?",
         (p_key, last_message_id)
     )
-    return cursor.fetchall()
+
+    result = []
+
+    for r in cursor.fetchall():
+        message_id = r[0]
+        p_key = r[1]
+        key = r[2]
+        message = r[3]
+        time = r[4]
+        result.append(
+            Message(
+                message_id=message_id,
+                receiver=p_key,
+                key=key,
+                message=message,
+                time=time
+            )
+        )
+
+    return result
