@@ -57,7 +57,16 @@ def _get_updates():
             return jsonify({"error": "message_id must be an integer"}), INVALID_ARGS
 
         messages = get_messages_by_id(public_key, last_id)
-        return jsonify(messages), SUCCESS
+        result = []
+
+        for message in messages:
+            result.append({
+                "message_id": message.message_id,
+                "key": message.key,
+                "message": message.message,
+                "time": message.time
+            })
+        return jsonify(result), SUCCESS
 
     except Exception as e:
         return jsonify({"error": str(e)}), INVALID_REQUEST_DATA
