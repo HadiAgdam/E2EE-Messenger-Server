@@ -20,7 +20,7 @@ def is_valid_public_key(public_key):
 
 @app.route("/api/new_message", methods=["POST"])
 def _new_message():
-    data = request.form
+    data = request.json
 
     if 'receiver' in data and 'key' in data and 'message' in data:
         if not is_valid_public_key(data['receiver']):
