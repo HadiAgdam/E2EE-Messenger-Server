@@ -8,33 +8,38 @@ app = Flask(__name__)
 INVALID_REQUEST_DATA = 400
 SUCCESS = 200
 INVALID_ARGS = 400
+SERVER_ERROR = 400
 
 
 def is_valid_public_key(public_key):
-    if public_key.startswith("04") and len(public_key) == 130:
-        return re.match(r'^[0-9a-fA-F]{130}$', public_key) is not None
-    elif public_key.startswith(("02", "03")) and len(public_key) == 66:
-        return re.match(r'^[0-9a-fA-F]{66}$', public_key) is not None
-    return False
+    # if public_key.startswith("04") and len(public_key) == 130:
+    #     return re.match(r'^[0-9a-fA-F]{130}$', public_key) is not None
+    # elif public_key.startswith(("02", "03")) and len(public_key) == 66:
+    #     return re.match(r'^[0-9a-fA-F]{66}$', public_key) is not None
+    # return False
+    return True
 
 
 @app.route("/api/new_message", methods=["POST"])
 def _new_message():
     data = request.json
 
-    if 'receiver' in data and 'key' in data and 'message' in data:
+    if 'receiver' in data and 'encryptionKey' in data and 'encryptedMessage' in data and 'iv' in data:
         if not is_valid_public_key(data['receiver']):
             return jsonify({"error": "Invalid ECC public key"}), INVALID_REQUEST_DATA
 
-        message = Message(
-            receiver=data.get("receiver"),
-            key=data.get("key"),
-            message=data.get("message"),
-        )
-        new_message(message)
-        return jsonify({
-            "status": "success"
-        }), SUCCESS
+        if new_message(encryption_key=data.get('encryptionKey'),
+                       encrypted_message=data.get('encryptedMessage'),
+                       iv=data.get('iv'),
+                       recipient_public_key=data.get('receiver')):
+
+            return jsonify({
+                "status": "success"
+            }), SUCCESS
+        else:
+            return jsonify({
+                "status": "server error"
+            }), SERVER_ERROR
     else:
         return jsonify({
             "error": "Invalid request data"
@@ -44,12 +49,11 @@ def _new_message():
 @app.route("/api/get_message", methods=["GET"])
 def _get_updates():
     try:
-        public_key = request.json.get("p_key")
+        public_key = request.json.get("publicKey")
+        last_id = request.json.get("message_id", 0)
 
         if not public_key or not is_valid_public_key(public_key):
             return jsonify({"error": "invalid arguments"}), INVALID_ARGS
-
-        last_id = request.json.get("message_id", 0)
 
         try:
             last_id = int(last_id)
@@ -61,10 +65,11 @@ def _get_updates():
 
         for message in messages:
             result.append({
-                "message_id": message.message_id,
-                "key": message.key,
-                "message": message.message,
-                "time": message.time
+                "messageId": message.message_id,
+                "encryptionKey": message.encryption_key,
+                "encryptedMessage": message.encrypted_message,
+                "time": message.time,
+                "iv": message.iv
             })
         return jsonify(result), SUCCESS
 

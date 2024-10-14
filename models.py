@@ -3,14 +3,14 @@
 class Message:
     def __init__(
             self,
-            receiver: str,
-            key: str,
-            message: str,
+            encryption_key: str,
+            encrypted_message: str,
+            time: float,
+            iv: str,
             message_id: int = -1,
-            time: int = -1
     ):
         self.message_id = message_id
-        self.receiver = receiver
-        self.key = key
-        self.message = message
+        self.encryption_key = encryption_key
+        self.encrypted_message = encrypted_message
         self.time = time
+        self.iv = iv
