@@ -46,8 +46,8 @@ def _new_message():
 @app.route("/api/get_message", methods=["GET"])
 def _get_updates():
     try:
-        public_key = request.json.get("publicKey")
-        last_id = request.json.get("message_id", 0)
+        public_key = request.args.get("publicKey")
+        last_id = request.args.get("messageId", 0)
 
         if not public_key or not is_valid_public_key(public_key):
             return jsonify({"error": "invalid arguments"}), INVALID_ARGS
