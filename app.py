@@ -74,5 +74,3 @@ def _get_updates():
         return jsonify({"error": str(e)}), INVALID_REQUEST_DATA
 
 
-if __name__ == '__main__':
-    app.run()
