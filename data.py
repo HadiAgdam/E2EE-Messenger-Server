@@ -1,8 +1,7 @@
 import sqlite3
 from models import Message
 
-conn = sqlite3.connect('e2ee_messenger_server.db')
-cursor = conn.cursor()
+# cursor = conn.cursor()
 
 
 def new_message(
@@ -10,7 +9,8 @@ def new_message(
         encrypted_message: str,
         iv: str,
         recipient_public_key):
-
+    conn = sqlite3.connect('e2ee_messenger_server.db')
+    cursor = conn.cursor()
     try:
         cursor.execute(
             "INSERT INTO messages (encrypted_key, encrypted_message, iv, recipient_public_key) "
@@ -19,11 +19,15 @@ def new_message(
         )
         conn.commit()
         return True
-    finally:
+    except Exception as e:
+        print("insert error :", e)
+        conn.close()
         return False
 
 
 def get_messages_by_id(recipient_public_key: str, last_message_id: int) -> list:
+    conn = sqlite3.connect('e2ee_messenger_server.db')
+    cursor = conn.cursor()
     cursor.execute(
         "SELECT message_id, encrypted_key, encrypted_message, time, iv "
         "FROM messages WHERE recipient_public_key = ? AND message_id > ?",
@@ -42,5 +46,5 @@ def get_messages_by_id(recipient_public_key: str, last_message_id: int) -> list:
                 iv=r[4]
             )
         )
-
+    conn.close()
     return result

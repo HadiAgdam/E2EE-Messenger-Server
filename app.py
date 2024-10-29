@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from models import Message
 from data import new_message, get_messages_by_id
-import re
+
 
 app = Flask(__name__)
 
@@ -32,10 +32,7 @@ def _new_message():
                        encrypted_message=data.get('encryptedMessage'),
                        iv=data.get('iv'),
                        recipient_public_key=data.get('receiver')):
-
-            return jsonify({
-                "status": "success"
-            }), SUCCESS
+            return jsonify({"status": "success"}), SUCCESS
         else:
             return jsonify({
                 "status": "server error"
